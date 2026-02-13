@@ -38,9 +38,9 @@ def screening_sales(conn):
     Order results by tickets_sold descending.
     """
     query = '''SELECT s.screening_id, f.title, COUNT(t.ticket_id) AS Tickets_Sold FROM films f 
-    INNER JOIN screenings s ON s.film_id = s.film_id
-    LEFT JOIN tickets t ON t.screening_id = s.screening_id 
-    GROUP BY s.screening_id, f.title
+    INNER JOIN screenings s ON s.film_id = f.film_id
+    LEFT JOIN tickets t ON s.screening_id = t.screening_id 
+    GROUP BY s.screening_id
     ORDER BY Tickets_Sold DESC'''
     cursor = conn.execute(query)
     return cursor.fetchall()
@@ -58,10 +58,9 @@ def top_customers_by_spend(conn, limit):
     Limit the number of rows returned to `limit`.
     """
     query = '''SELECT c.customer_name, SUM(t.price) AS total_spent FROM tickets t
-    JOIN customers c ON t.customer_id = t.customer_id
+    JOIN customers c ON t.customer_id = c.customer_id
     GROUP BY c.customer_id
     ORDER BY total_spent DESC
     LIMIT ?'''
     cursor = conn.execute(query,(limit,))
     return cursor.fetchall()
-
